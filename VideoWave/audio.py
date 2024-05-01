@@ -86,16 +86,23 @@ class Audio:
         return False
 
     def spectral_waves(self, shape, threshold, nps=None):
-        _, _, spg = signal.spectrogram(self.data[:, 0], self.samplerate, nperseg=nps)
-        spg /= spg.max()    # Normalize spectrogram
+        # If the audio is stereo, use only the first channel
+        audio_data = self.data[:, 0] if self.is_stereo else self.data
+
+        _, _, spg = signal.spectrogram(audio_data, self.samplerate, nperseg=nps)
+        spg /= spg.max()  # Normalize spectrogram
+
         # Remove empty spaces
         _, th_bin = cv2.threshold(spg, threshold, 1.0, cv2.THRESH_BINARY)
         nzrs = np.nonzero(th_bin.sum(axis=1))
         _, th_trc = cv2.threshold(spg[np.min(nzrs):np.max(nzrs), :], threshold, 1.0, cv2.THRESH_TRUNC)
+
         # Reshape spectrogram
         resized = cv2.resize(th_trc, shape, interpolation=cv2.INTER_AREA)
         resized /= resized.max()
+
         return resized
+
 
     def show_data(self, span=None):
         """
@@ -127,4 +134,3 @@ class Audio:
         else:
             plt.plot(self.data[start:end])
         plt.show()
-

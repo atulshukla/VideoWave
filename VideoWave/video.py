@@ -126,7 +126,7 @@ class Video:
     def export_from_images(self, output_file, path_to_frames, **kwargs):
         audio = kwargs.get("audio", None)
         fps = kwargs.get("fps", 29)
-        size = kwargs.get("size", (1920, 1080))
+        size = kwargs.get("size", (400, 400))
         vcodec = kwargs.get("vcodec", "libx264")
         quality = kwargs.get("quality", 15)
         pix_fmt = kwargs.get("pix_fmt", "yuv420p")
